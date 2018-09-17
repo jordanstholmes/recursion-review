@@ -36,6 +36,7 @@ RECURSIVE CASE:
 
 var stringifyJSON = function(obj) {
   let type = typeof obj;
+  
   if (type === 'function' || type === 'undefined') {
     return undefined;
   } else if (type === 'string') {
@@ -54,8 +55,18 @@ var stringifyJSON = function(obj) {
       }      
     }, '');
     return `[${insides}]`;
-  } else if (type === obj) {
-    
+  } else if (type === 'object') {
+    let count = 0;
+    let insides = _.reduce(obj, function(acc, value, key) {
+      let separator = count === 0 ? '' : ',';
+      count++;
+      if (value === undefined || typeof value === 'function' || key === undefined) {
+        return acc;
+      } else {
+        return acc + separator + stringifyJSON(key) + ':' + stringifyJSON(value);
+      }
+    }, '');
+    return `{${insides}}`;
   } 
 };
 
