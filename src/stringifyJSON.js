@@ -21,17 +21,53 @@ BASE CASE:
 -if it's 
 
 RECURSIVE CASE:
+-if it's an array:
+  add brackets outside
+  forEach value,
+    if it's undefined or a function, add 'null'
+    else recurse
+  
+-if it's an object:
+  forEach key,
+    if the key or value is undefined, skip it
+    else, recurse
 
 */
 
 var stringifyJSON = function(obj) {
   let type = typeof obj;
-  if (type === 'string') {
+  if (type === 'function' || type === 'undefined') {
+    return undefined;
+  } else if (type === 'string') {
     return `"${obj}"`;
-  } else if (type === 'number' || type === 'boolean') {
-    return obj.toString();
   } else if (obj === null || obj === Infinity || obj === -Infinity || Number.isNaN(obj)) {
     return 'null';
-  }
+  } else if (type === 'number' || type === 'boolean') {
+    return obj.toString();
+  } else if (obj.constructor === Array) {
+    let insides = obj.reduce(function(acc, elem, idx) {
+      let separator = idx === 0 ? '' : ',';
+      if (elem === undefined || typeof elem === 'function') {
+        return acc + separator + 'null';
+      } else {
+        return acc + separator + stringifyJSON(elem);
+      }      
+    }, '');
+    return `[${insides}]`;
+  } else if (type === obj) {
     
+  } 
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
