@@ -37,17 +37,6 @@ PSEUDO CODE:
 
 */
 
-var parseString = function(str) {
-  var result = '';
-  for (let char = nextChar(); char !== undefined && char !== '"'; char = nextChar()) {
-    result += char;
-  }
-  return result;
-};
-
-var parseObject = function(obj) {
-  
-};
 
 
 var parseJSON = function(json) {
@@ -55,13 +44,34 @@ var parseJSON = function(json) {
   var firstChar = json[0];
   
   var nextChar = function() {
-    let next = json[currentIdx];
     currentIdx++;
-    return next;  
+    return json[currentIdx];  
+  };
+  
+  var currentChar = function() {
+    return json[currentIdx];
+  }
+    
+  var parseString = function() {
+    var result = '';
+    for (let char = nextChar(); char !== undefined && char !== '"'; char = nextChar()) {
+      result += char;
+    }
+    return result;
+  };
+  
+  var parseNumber = function() {
+    var result = '';
+    for (let digit = currentChar(); Number(digit) === Number(digit); digit = nextChar()) {
+      result += digit;
+    }
+    return Number(result);
   };
   
   if (firstChar === '"') {
-    return  parseString(json);
+    return parseString();
+  } else if (Number(firstChar) === Number(firstChar)) {
+    return parseNumber();
   }
   
   // your code goes here
