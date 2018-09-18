@@ -95,6 +95,8 @@ var parseJSON = function(json) {
     nextChar(); // skip the semicolon
     var valChunk = json.slice(currentIdx);
     var val = parseJSON(valChunk);
+    // JORDAN: this is the current problem (needs to increment the count only as much as the key value pair)
+    // the line below jumps right to the }
     currentIdx += valChunk.length - 1; // I'm not actually super sure about the -1
     obj[key] = val;
     // return obj; 
