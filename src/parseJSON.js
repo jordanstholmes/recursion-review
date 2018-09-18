@@ -54,9 +54,10 @@ var parseJSON = function(json) {
     
   var parseString = function() {
     var result = '';
-    for (let char = nextChar(); char !== undefined && char !== '"'; char = nextChar()) {
+    for (let char = nextChar(); char !== '"'; char = nextChar()) {
       result += char;
     }
+    nextChar(); // discard the extra "
     return result;
   };
   
@@ -83,19 +84,35 @@ var parseJSON = function(json) {
     }
   };
   
+  // parseJSON('{"simple":"object"}');
+  
   var parsePair = function(obj) {
+    if (currentChar() === ',') {
+      nextChar();
+    }
+    
     var key = parseString();
     nextChar(); // skip the semicolon
-    var val = parseJSON(json.slice(currentIdx));
+    var valChunk = json.slice(currentIdx);
+    var val = parseJSON(valChunk);
+    currentIdx += valChunk.length - 1; // I'm not actually super sure about the -1
     obj[key] = val;
-    return obj; 
+    // return obj; 
   };
   
-  // var parseObject = function(jstring) {
-  //   var result = '';
+  var parseObject = function(jstring) {
+    var result = {};
     
-  //   if ()
-  // };
+    if (json[currentIdx + 1] === '}') {
+      return {};
+    }
+    
+    for (let pairStart = nextChar(); pairStart !== '}' && pairStart !== undefined; pairStart = currentChar()) {
+      parsePair(result);
+    }
+    
+    return result;
+  };
   
   // if (json.includes(':')) {
   //   return parsePair({});
@@ -109,6 +126,8 @@ var parseJSON = function(json) {
     return parseBoolean();
   } else if (firstChar === 'n') {
     return parseNull();
+  } else if (firstChar === '{') {
+    return parseObject(json);
   }
   
   
