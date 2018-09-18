@@ -50,7 +50,7 @@ var parseJSON = function(json) {
   
   var currentChar = function() {
     return json[currentIdx];
-  }
+  };
     
   var parseString = function() {
     var result = '';
@@ -68,11 +68,51 @@ var parseJSON = function(json) {
     return Number(result);
   };
   
+  var parseNull = function() {
+    currentIdx += 4;
+    return null; 
+  };
+  
+  var parseBoolean = function() {
+    if (currentChar() === 'f') {
+      currentIdx += 5;
+      return false;
+    } else {
+      currentIdx += 4;
+      return true;
+    }
+  };
+  
+  var parsePair = function(obj) {
+    var key = parseString();
+    nextChar(); // skip the semicolon
+    var val = parseJSON(json.slice(currentIdx));
+    obj[key] = val;
+    return obj; 
+  };
+  
+  // var parseObject = function(jstring) {
+  //   var result = '';
+    
+  //   if ()
+  // };
+  
+  // if (json.includes(':')) {
+  //   return parsePair({});
+  // }
+  
   if (firstChar === '"') {
     return parseString();
   } else if (Number(firstChar) === Number(firstChar)) {
     return parseNumber();
+  } else if (firstChar === 'f' || firstChar === 't') {
+    return parseBoolean();
+  } else if (firstChar === 'n') {
+    return parseNull();
   }
+  
+  
+  
   
   // your code goes here
 };
